@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+import pandas as pd
 
 app = FastAPI()
 
@@ -18,7 +19,15 @@ def root():
 
 @app.post("/recommend")
 def recommend_flights(request: FlightSearchRequest):
+    flights_df = pd.read_csv("data/flights.csv")
+
+    matching_flights = flights_df[
+        (flights_df["origin"] == request.origin) &
+        (flights_df["destination"] == request.destination) &
+        (flights_df["date"] == request.date)
+    ]
+
     return {
-        "message": "Recommend endpoint is working",
-        "your_input": request.dict()
+        "message": "Matching flights found",
+        "results": matching_flights.to_dict(orient="records")
     }
