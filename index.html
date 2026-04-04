@@ -4,27 +4,101 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Flight Discount Recommender</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #f8f9fa;
+    }
+
+    h1, h2 {
+      color: #333;
+    }
+
+    form {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 10px 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      background-color: #007bff;
+      color: white;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f1f1f1;
+    }
+
+    #results p {
+      background: white;
+      padding: 16px;
+      border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
   <h1>Flight Discount Recommender</h1>
 
   <form id="search-form">
-    <div>
+    <div class="form-group">
       <label for="origin">Origin:</label>
       <input type="text" id="origin" name="origin" required />
     </div>
 
-    <div>
+    <div class="form-group">
       <label for="destination">Destination:</label>
       <input type="text" id="destination" name="destination" required />
     </div>
 
-    <div>
+    <div class="form-group">
       <label for="date">Date:</label>
       <input type="date" id="date" name="date" required />
     </div>
 
-    <div>
+    <div class="form-group">
       <label for="number_of_passengers">Passengers:</label>
       <input type="number" id="number_of_passengers" name="number_of_passengers" min="1" required />
     </div>

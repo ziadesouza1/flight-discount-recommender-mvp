@@ -11,15 +11,62 @@ form.addEventListener("submit", async function (event) {
     number_of_passengers: Number(document.getElementById("number_of_passengers").value)
   };
 
-  const response = await fetch("http://127.0.0.1:8000/recommend", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(payload)
-  });
+  // 🔹 Show loading
+  resultsDiv.innerHTML = "<p>Loading...</p>";
 
-  const data = await response.json();
+  try {
+    const response = await fetch("http://127.0.0.1:8000/recommend", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    });
 
-  resultsDiv.innerHTML = `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+    if (!response.ok) {
+      throw new Error("Something went wrong with the request");
+    }
+
+    const data = await response.json();
+
+    if (!data.results || data.results.length === 0) {
+      resultsDiv.innerHTML = `<p>No matching flights found.</p>`;
+      return;
+    }
+
+    let tableHtml = `
+      <table>
+        <thead>
+          <tr>
+            <th>Flight No</th>
+            <th>Base Price</th>
+            <th>Total Base Price</th>
+            <th>Final Price</th>
+          </tr>
+        </thead>
+        <tbody>
+    `;
+
+    data.results.forEach(flight => {
+      tableHtml += `
+        <tr>
+          <td>${flight.flight_no}</td>
+          <td>$${flight.price.toFixed(2)}</td>
+          <td>$${flight.total_base_price.toFixed(2)}</td>
+          <td><strong>$${flight.final_price.toFixed(2)}</strong></td>
+        </tr>
+      `;
+    });
+
+    tableHtml += `
+        </tbody>
+      </table>
+    `;
+
+    resultsDiv.innerHTML = tableHtml;
+
+  } catch (error) {
+    console.error(error);
+    resultsDiv.innerHTML = `<p style="color: red;">Error fetching results. Please try again.</p>`;
+  }
 });
