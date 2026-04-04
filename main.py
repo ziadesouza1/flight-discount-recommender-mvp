@@ -8,7 +8,15 @@ app = FastAPI()
 
 @app.get("/")
 def root():
-    return {"message": "Flight Discount Recommender is running"}
+    return {
+        "message": "Flight Discount Recommender API is running", 
+        "main_endpoint": "/recommend"
+        }
+
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
 
 
 @app.post("/recommend")
@@ -19,7 +27,8 @@ def recommend_flights(request: FlightSearchRequest):
     matching_flights = flights_df[
         (flights_df["origin"] == request.origin) &
         (flights_df["destination"] == request.destination) &
-        (flights_df["date"] == request.date)
+        (flights_df["date"] == request.date) &
+        (flights_df["available_seats"] >= request.number_of_passengers)
     ].copy()
 
     if matching_flights.empty:
@@ -36,7 +45,11 @@ def recommend_flights(request: FlightSearchRequest):
 
     matching_flights = matching_flights.sort_values(by="final_price")
 
+    results = matching_flights[
+    ["flight_no", "price", "total_base_price", "final_price"]
+    ]
+
     return {
         "message": "Matching flights with discounts applied and ranked",
-        "results": matching_flights.to_dict(orient="records")
+        "results": results.to_dict(orient="records")
     }

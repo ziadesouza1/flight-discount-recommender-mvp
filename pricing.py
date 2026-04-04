@@ -16,12 +16,12 @@ def apply_discounts(matching_flights: pd.DataFrame, discounts_df: pd.DataFrame, 
 
     matching_flights["cashback_value"] = (
         matching_flights["price_after_promo"] * cashback_rate
-    )
+    ).round(2)
 
     matching_flights["final_price"] = (
         matching_flights["price_after_promo"]
         - matching_flights["cashback_value"]
         - miles_value
-    )
+    ).round(2)
 
     return matching_flights
