@@ -12,7 +12,7 @@ form.addEventListener("submit", async function (event) {
   };
 
   // 🔹 Show loading
-  resultsDiv.innerHTML = "<p>Loading...</p>";
+  resultsDiv.innerHTML = "<p>Searching best deals...</p>";
 
   try {
     const response = await fetch("http://127.0.0.1:8000/recommend", {
@@ -38,30 +38,34 @@ form.addEventListener("submit", async function (event) {
       <table>
         <thead>
           <tr>
-            <th>Flight No</th>
-            <th>Base Price</th>
-            <th>Total Base Price</th>
+            <th>Flight</th>
+            <th>Base</th>
+            <th>Total</th>
+            <th>Cashback</th>
+            <th>Savings</th>
             <th>Final Price</th>
           </tr>
         </thead>
         <tbody>
     `;
 
-    data.results.forEach(flight => {
+    data.results.forEach((flight, index) => {
+      const savings =
+        flight.total_base_price - flight.final_price;
+      
+      const highlight = index === 0 ? 'style="background-color: #d4edda;"' : "";
+
       tableHtml += `
-        <tr>
+        <tr ${highlight}>
           <td>${flight.flight_no}</td>
           <td>$${flight.price.toFixed(2)}</td>
           <td>$${flight.total_base_price.toFixed(2)}</td>
+          <td>$${(flight.cashback_value ?? 0).toFixed(2)}</td>
+          <td style="color: green;">-$${savings.toFixed(2)}</td>
           <td><strong>$${flight.final_price.toFixed(2)}</strong></td>
         </tr>
       `;
     });
-
-    tableHtml += `
-        </tbody>
-      </table>
-    `;
 
     resultsDiv.innerHTML = tableHtml;
 

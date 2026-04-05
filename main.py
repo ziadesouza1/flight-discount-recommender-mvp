@@ -55,7 +55,13 @@ def recommend_flights(request: FlightSearchRequest):
     matching_flights = matching_flights.sort_values(by="final_price")
 
     results = matching_flights[
-    ["flight_no", "price", "total_base_price", "final_price"]
+        [
+            "flight_no",
+            "price",
+            "total_base_price",
+            "cashback_value",
+            "final_price"
+        ]
     ]
 
     return {
