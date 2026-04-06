@@ -11,7 +11,6 @@ form.addEventListener("submit", async function (event) {
     number_of_passengers: Number(document.getElementById("number_of_passengers").value)
   };
 
-  // 🔹 Show loading
   resultsDiv.innerHTML = "<p>Searching best deals...</p>";
 
   try {
@@ -41,6 +40,7 @@ form.addEventListener("submit", async function (event) {
             <th>Flight</th>
             <th>Base</th>
             <th>Total</th>
+            <th>After Promo</th>
             <th>Cashback</th>
             <th>Savings</th>
             <th>Final Price</th>
@@ -50,22 +50,27 @@ form.addEventListener("submit", async function (event) {
     `;
 
     data.results.forEach((flight, index) => {
-      const savings =
-        flight.total_base_price - flight.final_price;
-      
+      const savings = flight.total_base_price - flight.final_price;
       const highlight = index === 0 ? 'style="background-color: #d4edda;"' : "";
+      const bestDealBadge = index === 0 ? ' <strong>(Best Deal)</strong>' : "";
 
       tableHtml += `
         <tr ${highlight}>
-          <td>${flight.flight_no}</td>
+          <td>${flight.flight_no}${bestDealBadge}</td>
           <td>$${flight.price.toFixed(2)}</td>
           <td>$${flight.total_base_price.toFixed(2)}</td>
-          <td>$${(flight.cashback_value ?? 0).toFixed(2)}</td>
-          <td style="color: green;">-$${savings.toFixed(2)}</td>
-          <td><strong>$${flight.final_price.toFixed(2)}</strong></td>
+          <td>$${flight.price_after_promo.toFixed(2)}</td>
+          <td>$${flight.cashback_value.toFixed(2)}</td>
+          <td>$${savings.toFixed(2)}</td>
+          <td>$${flight.final_price.toFixed(2)}</td>
         </tr>
       `;
     });
+
+    tableHtml += `
+        </tbody>
+      </table>
+    `;
 
     resultsDiv.innerHTML = tableHtml;
 

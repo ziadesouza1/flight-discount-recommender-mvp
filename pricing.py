@@ -1,27 +1,35 @@
-import pandas as pd
+from models import Flight, DiscountRule, PricedFlight
 
 
-def apply_discounts(matching_flights: pd.DataFrame, discounts_df: pd.DataFrame, number_of_passengers: int) -> pd.DataFrame:
-    promo_amount = discounts_df.loc[0, "promo_amount"]
-    cashback_rate = discounts_df.loc[0, "cashback_rate"]
-    miles_value = discounts_df.loc[0, "miles_value"]
+class PricingEngine:
+    def apply_discounts(
+        self,
+        flights: list[Flight],
+        discount_rule: DiscountRule,
+        number_of_passengers: int,
+    ) -> list[PricedFlight]:
+        priced_flights = []
 
-    matching_flights["total_base_price"] = (
-        matching_flights["price"] * number_of_passengers
-    )
+        for flight in flights:
+            total_base_price = flight.price * number_of_passengers
+            price_after_promo = total_base_price - discount_rule.promo_amount
+            cashback_value = round(
+                price_after_promo * discount_rule.cashback_rate, 2
+            )
+            final_price = round(
+                price_after_promo - cashback_value - discount_rule.miles_value,
+                2,
+            )
 
-    matching_flights["price_after_promo"] = (
-        matching_flights["total_base_price"] - promo_amount
-    )
+            priced_flights.append(
+                PricedFlight(
+                    flight_no=flight.flight_no,
+                    price=flight.price,
+                    total_base_price=total_base_price,
+                    price_after_promo=price_after_promo,
+                    cashback_value=cashback_value,
+                    final_price=final_price,
+                )
+            )
 
-    matching_flights["cashback_value"] = (
-        matching_flights["price_after_promo"] * cashback_rate
-    ).round(2)
-
-    matching_flights["final_price"] = (
-        matching_flights["price_after_promo"]
-        - matching_flights["cashback_value"]
-        - miles_value
-    ).round(2)
-
-    return matching_flights
+        return priced_flights
